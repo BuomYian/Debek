@@ -7,8 +7,9 @@ appointment books and physical filing cabinets with a single system for
 booking, electronic medical records, prescriptions, billing and patient
 file storage.
 
-> **Status:** Phase 1 of the build (scaffold) is complete. See
-> [Build phases](#build-phases) below for what's implemented so far.
+> **Status:** Phases 1–2 of the build (scaffold + database schema) are
+> complete. See [Build phases](#build-phases) below for what's
+> implemented so far.
 
 ## Tech stack
 
@@ -49,11 +50,18 @@ cp .env.example .env.local
 # fill in .env.local with your Supabase and Cloudinary credentials
 ```
 
-### Running migrations & seeding (Phase 2)
+### Running migrations & seeding
 
 ```bash
-npx supabase db push     # apply migrations in supabase/migrations/
-psql "$DATABASE_URL" -f supabase/seed.sql   # or: npx supabase db reset (local dev)
+npx supabase db push               # apply migrations in supabase/migrations/, in order
+node scripts/seed-users.mjs        # create the 15 seed staff/doctor logins (Admin API)
+psql "$DATABASE_URL" -f supabase/seed.sql   # patients, doctors, appointments, records, billing
+```
+
+Regenerate `lib/supabase/types.ts` after any migration change:
+
+```bash
+npx supabase gen types typescript --db-url "$DATABASE_URL" --schema public > lib/supabase/types.ts
 ```
 
 ### Development
@@ -62,15 +70,18 @@ psql "$DATABASE_URL" -f supabase/seed.sql   # or: npx supabase db reset (local d
 npm run dev
 ```
 
-### Default login credentials (seeded, Phase 2)
+### Default login credentials (seeded)
 
-Populated once the seed script lands — one login per role for grading/demo:
+All seeded accounts share the password `Debek@2026` — this is throwaway
+academic-project data, not a real deployment. The seed creates 2 admins,
+3 receptionists and 10 doctors (`doctor1@debek.local` … `doctor10@debek.local`,
+one per specialization); the primary one to demo with per role:
 
 | Role | Email | Password |
 |---|---|---|
-| Admin | _pending seed script_ | _pending seed script_ |
-| Doctor | _pending seed script_ | _pending seed script_ |
-| Receptionist | _pending seed script_ | _pending seed script_ |
+| Admin | `admin@debek.local` | `Debek@2026` |
+| Doctor | `doctor1@debek.local` (Dr. James Mwangi, General Medicine) | `Debek@2026` |
+| Receptionist | `reception@debek.local` | `Debek@2026` |
 
 ## Environment variables
 
@@ -119,8 +130,10 @@ after each phase:
 
 - [x] **Phase 1** — Project scaffold, Tailwind + shadcn/ui, Supabase
       client stubs, Cloudinary config stub, env config, folder structure.
-- [ ] **Phase 2** — Full SQL schema, enums, constraints, indexes, RLS
-      policies, triggers, seed script.
+- [x] **Phase 2** — Full SQL schema (20 migrations), enums, constraints,
+      indexes, RLS policies, triggers, seed script. Tested end-to-end
+      against a disposable Supabase-Postgres container — see
+      [supabase/migrations/README.md](supabase/migrations/README.md).
 - [ ] **Phase 3** — Authentication, middleware (Proxy) route protection,
       role-aware layout and sidebar, admin user management.
 - [ ] **Phase 4** — Patient Management.
