@@ -1,9 +1,5 @@
 # Build Prompt — Debek Medical Appointment & Patient Management System
 
-> Paste this into Claude Code, Cursor, Lovable, v0, or any AI coding assistant.
-> For agentic tools (Claude Code / Cursor), paste **Sections 1–9** first to scaffold,
-> then feed **Section 10** module by module. For one-shot tools, paste the whole thing.
-
 ---
 
 ## 1. Role and Objective
@@ -20,20 +16,20 @@ This is a final-year Computer Science project (Starford International University
 
 Do not substitute any of these:
 
-| Layer | Technology |
-|---|---|
-| Framework | **Next.js (App Router, latest stable)** |
-| Language | **TypeScript** (strict mode on, no `any`) |
-| Database | **PostgreSQL hosted on Supabase** |
-| Auth | **Supabase Auth** (email + password) |
-| File/image storage | **Cloudinary** (signed uploads only) |
-| Styling | **Tailwind CSS** + **shadcn/ui** components |
-| Forms & validation | **react-hook-form** + **Zod** |
-| Data fetching | Next.js Server Components + Server Actions; TanStack Query only where client-side caching is genuinely needed |
-| Tables | TanStack Table |
-| Charts | Recharts |
-| Dates | date-fns |
-| Version control | Git (produce a sensible `.gitignore`) |
+| Layer              | Technology                                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Framework          | **Next.js (App Router, latest stable)**                                                                       |
+| Language           | **TypeScript** (strict mode on, no `any`)                                                                     |
+| Database           | **PostgreSQL hosted on Supabase**                                                                             |
+| Auth               | **Supabase Auth** (email + password)                                                                          |
+| File/image storage | **Cloudinary** (signed uploads only)                                                                          |
+| Styling            | **Tailwind CSS** + **shadcn/ui** components                                                                   |
+| Forms & validation | **react-hook-form** + **Zod**                                                                                 |
+| Data fetching      | Next.js Server Components + Server Actions; TanStack Query only where client-side caching is genuinely needed |
+| Tables             | TanStack Table                                                                                                |
+| Charts             | Recharts                                                                                                      |
+| Dates              | date-fns                                                                                                      |
+| Version control    | Git (produce a sensible `.gitignore`)                                                                         |
 
 **Architecture to implement:**
 
@@ -49,19 +45,19 @@ User → Web Browser → Next.js Application → Supabase / PostgreSQL
 
 Exactly three operational roles. Patients are **records**, not users — they do not log in (no self-service portal in v1).
 
-| Capability | Admin | Doctor | Receptionist |
-|---|:--:|:--:|:--:|
-| Manage staff users & roles | ✅ | ❌ | ❌ |
-| Register / edit patients | ✅ | View only | ✅ |
-| Manage doctor profiles | ✅ | Own profile only | View only |
-| Set doctor availability | ✅ | Own schedule only | View only |
-| Book / reschedule / cancel appointments | ✅ | Own appointments | ✅ |
-| Create & edit medical records | ❌ (view only) | ✅ (own consultations) | ❌ |
-| Issue prescriptions | ❌ (view only) | ✅ | ❌ |
-| Create invoices / record payments | ✅ | ❌ | ✅ |
-| Upload patient files | ✅ | ✅ | ✅ |
-| View reports & dashboards | ✅ | Own workload only | Limited (daily queue) |
-| View audit log | ✅ | ❌ | ❌ |
+| Capability                              |     Admin      |         Doctor         |     Receptionist      |
+| --------------------------------------- | :------------: | :--------------------: | :-------------------: |
+| Manage staff users & roles              |       ✅       |           ❌           |          ❌           |
+| Register / edit patients                |       ✅       |       View only        |          ✅           |
+| Manage doctor profiles                  |       ✅       |    Own profile only    |       View only       |
+| Set doctor availability                 |       ✅       |   Own schedule only    |       View only       |
+| Book / reschedule / cancel appointments |       ✅       |    Own appointments    |          ✅           |
+| Create & edit medical records           | ❌ (view only) | ✅ (own consultations) |          ❌           |
+| Issue prescriptions                     | ❌ (view only) |           ✅           |          ❌           |
+| Create invoices / record payments       |       ✅       |           ❌           |          ✅           |
+| Upload patient files                    |       ✅       |           ✅           |          ✅           |
+| View reports & dashboards               |       ✅       |   Own workload only    | Limited (daily queue) |
+| View audit log                          |       ✅       |           ❌           |          ❌           |
 
 Enforce authorization in **three places**: Next.js middleware (route protection), server actions (re-check role before every mutation), and **Postgres Row Level Security policies** (defence in depth — never trust the client). RLS is a required deliverable, not optional.
 
@@ -111,16 +107,21 @@ Generate SQL migration files. Use `uuid` primary keys (`gen_random_uuid()`), `ti
 Build these nine modules, in this order.
 
 ### 5.1 Authentication & Authorization
+
 Login page, password reset, session handling via Supabase Auth. Admin-only user management screen: invite staff, assign role, deactivate. Protected route groups per role. Auto-redirect to the correct dashboard after login. Session timeout after inactivity.
 
 ### 5.2 Patient Management
+
 Register patients with full demographic and medical-alert fields. Auto-generate `patient_number`. Paginated, sortable, searchable patient list (search by name, phone, or patient number, debounced, server-side). Patient detail page with tabs: **Overview / Appointments / Medical Records / Prescriptions / Billing / Files**. Edit and soft-delete (deactivate). Warn on possible duplicate registration (same name + DOB or same phone).
 
 ### 5.3 Doctor Management
+
 Doctor profiles with specialization, license number, qualifications, consultation fee. Weekly availability editor (per weekday: start time, end time, slot length). Time-off / leave entry that blocks slot generation. Filter doctors by specialization. Doctors can edit their own profile and schedule only.
 
 ### 5.4 Appointment Booking
+
 The centrepiece module — give it the most care.
+
 - Booking flow: select patient (with inline "register new patient" shortcut) → select doctor or specialization → pick date → **see live-generated available slots**, computed from `doctor_availability` minus existing appointments minus `doctor_time_off`.
 - Prevent double-booking with the DB exclusion constraint; show a clear, friendly error if a race condition occurs.
 - Calendar views: day, week, and month. Colour-coded by status.
@@ -129,19 +130,25 @@ The centrepiece module — give it the most care.
 - Doctor's own "My schedule" view with a one-click jump into the consultation form.
 
 ### 5.5 Electronic Medical Records
+
 Consultation form launched from an appointment: chief complaint, vitals (structured, with basic range warnings), examination findings, diagnosis, treatment plan, clinical notes, follow-up date. Records are **append-only in spirit** — edits allowed but every change written to `audit_logs`. Chronological patient history timeline. Attach files to a record. Print-friendly view.
 
 ### 5.6 Prescription Management
+
 Issued by doctors from within a consultation. One prescription holds many medication line items (drug, dosage, frequency, duration, route, instructions). Printable prescription slip with clinic header, patient details, doctor name, license number, and date. Flag potential duplicate active prescriptions of the same medication for the same patient.
 
 ### 5.7 Billing Management
+
 Auto-draft an invoice when an appointment is completed, seeded with the doctor's consultation fee. Add line items (procedures, lab, supplies). Discounts and tax. Record full or partial payments with method and reference; `status` and `balance` update automatically. Printable invoice / receipt. Outstanding-balances list.
 
 ### 5.8 File Management (Cloudinary)
+
 Upload lab results, scans, referrals, consent forms, ID documents. **Signed uploads only** — generate the signature in a server action; never expose the Cloudinary API secret to the browser. Restrict MIME types (PDF, JPG, PNG, WEBP) and cap file size (e.g. 10 MB). Thumbnail previews for images, icon + filename for PDFs. Store the `public_id` so files can be deleted properly. Delete requires admin or the uploading user.
 
 ### 5.9 Reports & Dashboards
+
 Role-aware dashboards plus a reports section with date-range filters and CSV export:
+
 - **Appointments:** volume over time, by status, by doctor, by specialization; no-show rate; cancellation rate.
 - **Patients:** new registrations over time, total active, age/gender distribution, returning vs new.
 - **Revenue:** total billed, total collected, outstanding balance, revenue by doctor, revenue by payment method.
@@ -168,7 +175,7 @@ Admin dashboard: today's appointments, patients seen today, revenue today, outst
 
 ## 7. Non-Functional Requirements
 
-- **Security:** RLS on every table; server-side role checks on every mutation; Zod validation on all inputs (client *and* server); no secrets in client bundles; parameterised queries only; rate-limit login attempts; secure headers; HTTPS assumed in deployment.
+- **Security:** RLS on every table; server-side role checks on every mutation; Zod validation on all inputs (client _and_ server); no secrets in client bundles; parameterised queries only; rate-limit login attempts; secure headers; HTTPS assumed in deployment.
 - **Data integrity:** foreign keys with sensible `ON DELETE` behaviour (restrict on clinical data, never silently cascade a patient's history away); the appointment overlap exclusion constraint; check constraints on money (non-negative) and on `scheduled_end > scheduled_start`.
 - **Performance:** server-side pagination everywhere (default 20 rows); indexed queries; no N+1 fetching; images served through Cloudinary transformations.
 - **Reliability:** typed error handling in server actions returning `{ success, data?, error? }`; no unhandled promise rejections; graceful degradation if Cloudinary is unreachable.

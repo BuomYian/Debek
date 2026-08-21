@@ -7,7 +7,8 @@ appointment books and physical filing cabinets with a single system for
 booking, electronic medical records, prescriptions, billing and patient
 file storage.
 
-> **Status:** Phases 1–2 of the build (scaffold + database schema) are
+> **Status:** Phases 1–5 of the build (scaffold, database schema, auth &
+> role-aware shell, patient management, doctor management) are
 > complete. See [Build phases](#build-phases) below for what's
 > implemented so far.
 
@@ -89,6 +90,21 @@ See [`.env.example`](.env.example) for the full list with descriptions:
 Supabase URL / anon key / service role key, and Cloudinary cloud name /
 API key / API secret.
 
+## Email templates (Supabase dashboard)
+
+Password reset and staff-invite emails both land on
+[`app/auth/confirm/route.ts`](app/auth/confirm/route.ts), which expects
+`token_hash`, `type`, and `next` query params — Supabase's default email
+templates don't link there out of the box, so this needs a one-time
+manual step per project: **Supabase dashboard → Authentication → Email
+Templates**, set the link in both templates to:
+
+- **Reset Password**: `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/reset-password`
+- **Invite user**: `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=/reset-password`
+
+(Same destination for both — an invited user sets their initial
+password on the same form a password reset uses.)
+
 ## Project structure
 
 ```
@@ -134,10 +150,22 @@ after each phase:
       indexes, RLS policies, triggers, seed script. Tested end-to-end
       against a disposable Supabase-Postgres container — see
       [supabase/migrations/README.md](supabase/migrations/README.md).
-- [ ] **Phase 3** — Authentication, middleware (Proxy) route protection,
-      role-aware layout and sidebar, admin user management.
-- [ ] **Phase 4** — Patient Management.
-- [ ] **Phase 5** — Doctor Management, availability, time-off.
+- [x] **Phase 3** — Authentication (login, forgot/reset password, staff
+      invites), `proxy.ts` route protection, role-aware layout/sidebar,
+      session timeout, admin user management. Global search (⌘K) from
+      Section 6 is deliberately deferred to Phase 4/6 — there's no
+      patient or appointment data to search yet.
+- [x] **Phase 4** — Patient Management: register/edit, server-side
+      paginated + debounced search, soft-delete, duplicate-registration
+      warning, patient detail page with tabs (Overview real; the rest
+      placeholder until their own phase), ⌘K global search.
+- [x] **Phase 5** — Doctor Management: directory with specialization
+      filter, admin links a doctor profile to an invited Doctor-role
+      staff account, weekly availability editor (with an app-level
+      overlap check — see actions/doctors.ts), time-off entries. One
+      shared profile/availability/time-off view powers both
+      `/doctors/[id]` (admin, or a doctor viewing themself) and
+      `/doctors/schedule` (a doctor's own shortcut).
 - [ ] **Phase 6** — Appointment Booking, calendars, queue.
 - [ ] **Phase 7** — Electronic Medical Records.
 - [ ] **Phase 8** — Prescription Management.

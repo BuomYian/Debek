@@ -1,11 +1,7 @@
-import { ModulePlaceholder } from "@/components/module-placeholder";
+import { ForgotPasswordForm } from "@/components/features/auth/forgot-password-form";
+
+export const metadata = { title: "Forgot password" };
 
 export default function ForgotPasswordPage() {
-  return (
-    <ModulePlaceholder
-      title="Forgot Password"
-      description="Password reset flow via Supabase Auth."
-      phase="Phase 3"
-    />
-  );
+  return <ForgotPasswordForm />;
 }

@@ -1,19 +1,30 @@
 import type { ReactNode } from "react";
 
+import { AppSidebar } from "@/components/features/layout/app-sidebar";
+import { SessionTimeoutHandler } from "@/components/features/layout/session-timeout-handler";
+import { Topbar } from "@/components/features/layout/topbar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { requireUser } from "@/lib/auth/guards";
+
 /**
- * Shell for all authenticated staff routes (Admin / Doctor / Receptionist).
- *
- * This is a structural placeholder for Phase 1. The real implementation
- * (Phase 3) adds: session check + redirect to /login, a role-aware sidebar
- * that only renders links the current role may use, a topbar with the
- * ⌘K global search, and the session-timeout handling required by
- * Section 5.1 / Section 6.
+ * Shell for all authenticated staff routes (Admin / Doctor /
+ * Receptionist). `requireUser()` is the second of the three enforcement
+ * layers from Section 3 — proxy.ts already redirected an unauthenticated
+ * request before this ever renders, but a Server Component re-checking
+ * its own precondition is what makes that defence-in-depth rather than
+ * a single point of failure.
  */
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({ children }: { children: ReactNode }) {
+  const user = await requireUser();
+
   return (
-    <div className="flex min-h-screen w-full">
-      {/* TODO(Phase 3): role-aware <Sidebar /> */}
-      <main className="flex flex-1 flex-col gap-4 p-6">{children}</main>
-    </div>
+    <SidebarProvider>
+      <AppSidebar role={user.role} />
+      <SidebarInset>
+        <Topbar user={user} />
+        <main className="flex flex-1 flex-col gap-4 p-6">{children}</main>
+      </SidebarInset>
+      <SessionTimeoutHandler />
+    </SidebarProvider>
   );
 }

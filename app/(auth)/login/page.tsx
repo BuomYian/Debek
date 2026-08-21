@@ -1,11 +1,15 @@
-import { ModulePlaceholder } from "@/components/module-placeholder";
+import { Suspense } from "react";
+
+import { LoginForm } from "@/components/features/auth/login-form";
+
+export const metadata = { title: "Sign in" };
 
 export default function LoginPage() {
   return (
-    <ModulePlaceholder
-      title="Login"
-      description="Email + password sign-in via Supabase Auth, with role-based redirect after login."
-      phase="Phase 3"
-    />
+    // useSearchParams() in LoginForm requires a Suspense boundary during
+    // static generation.
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

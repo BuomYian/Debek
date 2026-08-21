@@ -1,6 +1,9 @@
 import { ModulePlaceholder } from "@/components/module-placeholder";
+import { requireRole } from "@/lib/auth/guards";
 
-export default function TodaysQueuePage() {
+export default async function TodaysQueuePage() {
+  await requireRole(["admin", "receptionist"]);
+
   return (
     <ModulePlaceholder
       title="Today's Queue"
