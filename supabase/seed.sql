@@ -1,0 +1,7 @@
+-- Seed data, built in Phase 2 alongside the schema migrations.
+--
+-- Target: ~5 staff users (spanning all 3 roles), ~10 doctors,
+-- ~50 patients, ~200 appointments spread across past and future dates,
+-- plus matching medical records, prescriptions and invoices — enough
+-- that every dashboard, chart and report renders with realistic data
+-- on first run (Section 4 / Section 9.7).
