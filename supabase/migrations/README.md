@@ -23,6 +23,7 @@
 0018_audit_triggers.sql      -- generic audit trigger, attached to clinical + financial tables
 0019_indexes.sql             -- a few cross-cutting indexes
 0020_rls_policies.sql        -- RLS helper functions + every table's policies
+0021_reschedule_function.sql -- atomic cancel-original + insert-new, SECURITY INVOKER so RLS still applies
 ```
 
 Apply against a Supabase project:

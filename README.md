@@ -7,10 +7,12 @@ appointment books and physical filing cabinets with a single system for
 booking, electronic medical records, prescriptions, billing and patient
 file storage.
 
-> **Status:** Phases 1–5 of the build (scaffold, database schema, auth &
-> role-aware shell, patient management, doctor management) are
+> **Status:** Phases 1–8 of the build (scaffold, database schema, auth &
+> role-aware shell, patient management, doctor management, appointment
+> booking, electronic medical records, prescription management) are
 > complete. See [Build phases](#build-phases) below for what's
-> implemented so far.
+> implemented so far. The live Supabase project referenced in
+> `.env.local` is migrated and seeded — see the credentials table above.
 
 ## Tech stack
 
@@ -166,9 +168,29 @@ after each phase:
       shared profile/availability/time-off view powers both
       `/doctors/[id]` (admin, or a doctor viewing themself) and
       `/doctors/schedule` (a doctor's own shortcut).
-- [ ] **Phase 6** — Appointment Booking, calendars, queue.
-- [ ] **Phase 7** — Electronic Medical Records.
-- [ ] **Phase 8** — Prescription Management.
+- [x] **Phase 6** — Appointment Booking (the spec's own "give it the
+      most care" module): live slot generation (`lib/scheduling/slots.ts`,
+      unit-verified standalone), booking flow with inline patient
+      registration, day/week/month calendar views colour-coded by
+      status, the full scheduled→confirmed→checked_in→in_progress→completed
+      lifecycle plus cancel-with-reason, reschedule via a new atomic
+      `reschedule_appointment` Postgres function (0021 — verified this
+      one can't lose the original booking on a race), and the reception
+      queue. Also wired the patient detail page's Appointments tab to
+      real data now that it exists.
+- [x] **Phase 7** — Electronic Medical Records: consultation form
+      (chief complaint, structured vitals with basic range warnings —
+      `lib/vitals.ts`, examination, diagnosis, treatment plan, follow-up
+      date), saving a consultation completes its linked appointment,
+      edits are audit-logged automatically (the DB trigger from Phase
+      2, no extra code needed), chronological patient timeline,
+      print-friendly view (sidebar/topbar hidden via `print:` utilities).
+      Admin is view-only; receptionist doesn't see this tab at all.
+- [x] **Phase 8** — Prescription Management: issued from within a
+      consultation (medical record page), dynamic medication line
+      items, non-blocking duplicate-active-medication warning, printable
+      slip with clinic header/patient details/doctor license/date,
+      patient-tab and standalone list integration.
 - [ ] **Phase 9** — Billing.
 - [ ] **Phase 10** — Cloudinary file upload.
 - [ ] **Phase 11** — Reports & dashboards.

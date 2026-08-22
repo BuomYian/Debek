@@ -36,7 +36,23 @@ function toFormValues(patient: Patient): PatientFormInput {
   };
 }
 
-export function PatientForm({ patient }: { patient?: Patient }) {
+export function PatientForm({
+  patient,
+  onCreated,
+  onCancel,
+}: {
+  patient?: Patient;
+  /**
+   * When provided, a successful *registration* (not edit) calls this
+   * instead of navigating to the new patient's detail page — used by
+   * the appointment booking flow's inline "register new patient"
+   * shortcut (Section 5.4), which needs to stay on the booking form and
+   * just select the patient it created.
+   */
+  onCreated?: (patientId: string) => void;
+  /** Overrides the Cancel button's default router.back() — needed inline in a dialog. */
+  onCancel?: () => void;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [duplicates, setDuplicates] = useState<Patient[]>([]);
@@ -107,6 +123,10 @@ export function PatientForm({ patient }: { patient?: Patient }) {
       const result = await createPatient(values);
       if (result.success) {
         toast.success("Patient registered.");
+        if (onCreated) {
+          onCreated(result.data.id);
+          return;
+        }
         router.push(`/patients/${result.data.id}`);
         router.refresh();
       } else {
@@ -322,7 +342,7 @@ export function PatientForm({ patient }: { patient?: Patient }) {
         </div>
 
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => router.back()} disabled={isPending}>
+          <Button type="button" variant="outline" onClick={onCancel ?? (() => router.back())} disabled={isPending}>
             Cancel
           </Button>
           <Button type="submit" disabled={isPending}>

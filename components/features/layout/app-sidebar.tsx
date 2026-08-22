@@ -27,7 +27,7 @@ export function AppSidebar({ role }: { role: UserRole }) {
   const sections = getNavSections(role);
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="print:hidden">
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1.5">
           <Stethoscope className="size-5 shrink-0 text-primary" aria-hidden="true" />

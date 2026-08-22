@@ -22,7 +22,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       <AppSidebar role={user.role} />
       <SidebarInset>
         <Topbar user={user} />
-        <main className="flex flex-1 flex-col gap-4 p-6">{children}</main>
+        <main className="flex flex-1 flex-col gap-4 p-6 print:p-0">{children}</main>
       </SidebarInset>
       <SessionTimeoutHandler />
     </SidebarProvider>

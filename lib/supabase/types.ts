@@ -831,6 +831,14 @@ export type Database = {
         Args: { p_pad?: number; p_prefix: string; p_scope: string }
         Returns: string
       }
+      reschedule_appointment: {
+        Args: {
+          p_appointment_id: string
+          p_new_end: string
+          p_new_start: string
+        }
+        Returns: string
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
