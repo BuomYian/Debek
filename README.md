@@ -7,10 +7,11 @@ appointment books and physical filing cabinets with a single system for
 booking, electronic medical records, prescriptions, billing and patient
 file storage.
 
-> **Status:** Phases 1–9 of the build (scaffold, database schema, auth &
-> role-aware shell, patient management, doctor management, appointment
-> booking, electronic medical records, prescription management,
-> billing) are complete. See [Build phases](#build-phases) below for what's
+> **Status:** Phases 1–10 of the build (scaffold, database schema, auth
+> & role-aware shell, patient management, doctor management,
+> appointment booking, electronic medical records, prescription
+> management, billing, file uploads) are complete. See
+> [Build phases](#build-phases) below for what's
 > implemented so far. The live Supabase project referenced in
 > `.env.local` is migrated and seeded — see the credentials table above.
 
@@ -122,7 +123,7 @@ password on the same form a password reset uses.)
     /billing              → invoices, [id], payments
     /reports              → appointments, patients, revenue, workload
     /admin                → users, audit-log, settings
-  /api                    → cloudinary signature, webhooks (Phase 10)
+  /api                    → cloudinary signature
 /components
   /ui                     → shadcn primitives (unmodified)
   /features               → per-module components
@@ -202,7 +203,14 @@ after each phase:
       status / balance all recompute via the Phase 2 triggers — no new
       code needed for that part), printable invoice/receipt, outstanding
       balances list.
-- [ ] **Phase 10** — Cloudinary file upload.
+- [x] **Phase 10** — Cloudinary file upload: signed direct-to-Cloudinary
+      uploads (the file never passes through our server — `/api/cloudinary/sign`
+      only ever returns a signature, never the secret), MIME/size
+      restricted both client-side and in the signed request itself
+      (`allowed_formats`), thumbnail previews for images vs.
+      icon+filename for PDFs, delete requires admin or the uploader.
+      Verified the full round trip (sign → upload → destroy) against
+      the real Cloudinary account, not just build/lint.
 - [ ] **Phase 11** — Reports & dashboards.
 - [ ] **Phase 12** — Audit logging, polish, accessibility, docs.
 

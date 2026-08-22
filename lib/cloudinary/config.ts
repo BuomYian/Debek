@@ -29,13 +29,8 @@ cloudinary.config({
 
 export { cloudinary };
 
-/** MIME types accepted for patient file uploads (Section 5.8). */
-export const ALLOWED_UPLOAD_MIME_TYPES = [
-  "application/pdf",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-] as const;
-
-/** Max upload size in bytes (10 MB, per Section 5.8). */
-export const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024;
+// Re-exported for convenience so server-side code can import everything
+// from this one module — but the constants themselves live in
+// ./constants.ts (no "server-only"), which is the module Client
+// Components actually import from.
+export { ALLOWED_UPLOAD_MIME_TYPES, MAX_UPLOAD_SIZE_BYTES } from "./constants";
