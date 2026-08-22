@@ -14,17 +14,32 @@ export function QueueRow({
   appointment,
   quickAction,
   timeLabel,
+  onQuickAction,
+  disabled,
 }: {
   appointment: AppointmentWithNames;
   quickAction?: { target: AppointmentStatus; label: string };
   /** e.g. "Scheduled 09:30" or "Waiting 12 min" — caller decides what's most useful per section. */
   timeLabel: string;
+  /**
+   * When provided (QueueBoard does this, wrapping it in useOptimistic),
+   * the row defers to the caller instead of managing its own
+   * request/refresh — that's what makes the status change appear
+   * instantly instead of waiting on a round trip. Omit it and the row
+   * falls back to handling the mutation itself, for any standalone use.
+   */
+  onQuickAction?: (id: string, status: AppointmentStatus) => void;
+  disabled?: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  function onQuickAction() {
+  function onClickQuickAction() {
     if (!quickAction) return;
+    if (onQuickAction) {
+      onQuickAction(appointment.id, quickAction.target);
+      return;
+    }
     startTransition(async () => {
       const result = await setAppointmentStatus({ id: appointment.id, status: quickAction.target });
       if (result.success) {
@@ -46,7 +61,7 @@ export function QueueRow({
         </span>
       </Link>
       {quickAction && (
-        <Button size="sm" onClick={onQuickAction} disabled={isPending}>
+        <Button size="sm" onClick={onClickQuickAction} disabled={disabled ?? isPending}>
           {quickAction.label}
         </Button>
       )}

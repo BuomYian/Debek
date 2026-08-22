@@ -7,13 +7,18 @@ appointment books and physical filing cabinets with a single system for
 booking, electronic medical records, prescriptions, billing and patient
 file storage.
 
-> **Status:** Phases 1–10 of the build (scaffold, database schema, auth
-> & role-aware shell, patient management, doctor management,
+> **Status:** All 12 phases of the build (scaffold, database schema,
+> auth & role-aware shell, patient management, doctor management,
 > appointment booking, electronic medical records, prescription
-> management, billing, file uploads) are complete. See
-> [Build phases](#build-phases) below for what's
-> implemented so far. The live Supabase project referenced in
-> `.env.local` is migrated and seeded — see the credentials table above.
+> management, billing, file uploads, reports & dashboards, audit
+> logging/polish/docs) are complete. See
+> [Build phases](#build-phases) below for what's implemented. The live
+> Supabase project referenced in `.env.local` is migrated and seeded —
+> see the credentials table above. Full browser/E2E testing was
+> deliberately deferred until the build was finished (see
+> [docs/testing.md](docs/testing.md)) and has not yet been run against
+> the live app — see the note at the end of
+> [Build phases](#build-phases).
 
 ## Tech stack
 
@@ -211,8 +216,48 @@ after each phase:
       icon+filename for PDFs, delete requires admin or the uploader.
       Verified the full round trip (sign → upload → destroy) against
       the real Cloudinary account, not just build/lint.
-- [ ] **Phase 11** — Reports & dashboards.
-- [ ] **Phase 12** — Audit logging, polish, accessibility, docs.
+- [x] **Phase 11** — Reports & dashboards: role-aware `/dashboard`
+      content (admin/doctor/receptionist each genuinely different, per
+      Section 5.9), 4 admin reports with date-range filters and CSV
+      export (appointments, patients, revenue, doctor workload),
+      Recharts-based charts following the dataviz skill's method — a
+      validated 8-hue categorical palette now lives in `app/globals.css`'s
+      `--chart-1..8` (replacing the scaffold's grayscale defaults),
+      single-hue bars for "value by category," the palette only for
+      genuine multi-series breakdowns. **Not yet visually verified** —
+      Recharts needs a real DOM to render (true since v2, confirmed this
+      isn't new in v3), so the SSR-only smoke test I could run without a
+      browser couldn't settle it either way; this is the one thing in
+      this phase still resting on "the code is well-formed," not on
+      having watched it render.
+- [x] **Phase 12** — Audit logging, polish, accessibility, docs. A real
+      `/admin/audit-log` UI (filter by table/action, paginated, JSON
+      before/after diff dialog — the underlying trigger has existed
+      since Phase 2, this is the first UI for it), a minimal honest
+      `/admin/settings` page (read-only clinic identity; no dynamic
+      settings form, since the spec never defines settings content and
+      there's no settings table in the schema), optimistic UI for
+      appointment status changes (`QueueBoard`, `useOptimistic` — the
+      one Section 6 item that had been deferred, now shared between the
+      standalone queue page and the receptionist dashboard), an
+      accessibility pass (icon-only buttons, image alt text, label
+      associations — no real gaps found beyond what shadcn/Radix/cmdk
+      already handle), and the four `/docs` deliverables: ER diagram,
+      architecture diagram, use-case diagram, and UAT test cases per
+      module (`docs/testing.md`).
+
+  **What's still open:** per an explicit instruction partway through
+  the build, full browser-based E2E testing was deferred until the
+  whole app was built rather than done phase-by-phase; it has not been
+  run yet. Everything through Phase 12 has been verified by
+  `npm run build` / `npm run lint` (both clean) plus targeted
+  non-browser checks (standalone unit tests for pure logic like
+  `lib/scheduling/slots.ts`, disposable-Postgres-container tests for
+  schema/RLS/the reschedule function, and direct API round-trips for
+  Cloudinary) — but the Recharts-based report charts specifically have
+  never been watched rendering in an actual browser, and no full
+  click-through of any module's UI has happened yet. `docs/testing.md`
+  is written and ready to drive that pass.
 
 ## A note on "middleware"
 
