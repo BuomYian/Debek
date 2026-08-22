@@ -43,7 +43,7 @@ export function InvoiceChargesForm({ invoice }: { invoice: Invoice }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Discount</FieldLabel>
+                <FieldLabel htmlFor={field.name}>Discount (SSP)</FieldLabel>
                 <Input {...field} id={field.name} type="number" min={0} step="0.01" disabled={isPending} aria-invalid={fieldState.invalid} />
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
@@ -54,7 +54,7 @@ export function InvoiceChargesForm({ invoice }: { invoice: Invoice }) {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Tax</FieldLabel>
+                <FieldLabel htmlFor={field.name}>Tax (SSP)</FieldLabel>
                 <Input {...field} id={field.name} type="number" min={0} step="0.01" disabled={isPending} aria-invalid={fieldState.invalid} />
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>

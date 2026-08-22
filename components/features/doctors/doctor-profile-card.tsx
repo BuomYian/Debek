@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DoctorProfileForm } from "@/components/features/doctors/doctor-profile-form";
+import { formatMoney } from "@/lib/currency";
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -41,7 +42,7 @@ export function DoctorProfileCard({ doctor, canEdit }: { doctor: DoctorWithProfi
             <Field label="Specialization" value={doctor.specialization} />
             <Field label="License number" value={<span className="font-mono">{doctor.license_number}</span>} />
             <Field label="Qualifications" value={doctor.qualifications} />
-            <Field label="Consultation fee" value={`$${Number(doctor.consultation_fee).toFixed(2)}`} />
+            <Field label="Consultation fee" value={formatMoney(Number(doctor.consultation_fee))} />
             <Field label="Phone" value={doctor.profile?.phone} />
             <Field
               label="Status"

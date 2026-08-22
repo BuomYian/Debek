@@ -8,12 +8,9 @@ import { StatTile } from "@/components/features/reports/stat-tile";
 import { CsvExportButton } from "@/components/csv-export-button";
 import { toCsv } from "@/lib/csv";
 import { requireRole } from "@/lib/auth/guards";
+import { formatMoney as money } from "@/lib/currency";
 
 export const metadata = { title: "Revenue Reports" };
-
-function money(value: number): string {
-  return `$${value.toFixed(2)}`;
-}
 
 export default async function RevenueReportPage(props: PageProps<"/reports/revenue">) {
   await requireRole(["admin"]);

@@ -90,7 +90,7 @@ export function AddInvoiceItemDialog({ invoiceId }: { invoiceId: string }) {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Unit price</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Unit price (SSP)</FieldLabel>
                     <Input {...field} id={field.name} type="number" min={0} step="0.01" disabled={isPending} aria-invalid={fieldState.invalid} />
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   </Field>

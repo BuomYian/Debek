@@ -49,20 +49,22 @@ begin
 end $$;
 
 -- ── 1. Doctors ───────────────────────────────────────────────────────
+-- Consultation fees are in South Sudanese Pounds (SSP) — round figures
+-- typical of a private clinic in Juba, not a $-to-SSP conversion.
 insert into public.doctors (profile_id, specialization, license_number, qualifications, consultation_fee, bio)
 select p.id, d.specialization, d.license_number, d.qualifications, d.fee, d.bio
 from (
   values
-    ('doctor1@debek.local', 'General Medicine', 'LIC-1001', 'MBChB, MMed (Family Medicine)', 15.00, 'General practitioner with 10 years of clinic experience.'),
-    ('doctor2@debek.local', 'Pediatrics', 'LIC-1002', 'MBChB, MMed (Paediatrics)', 18.00, 'Focuses on child and adolescent health.'),
-    ('doctor3@debek.local', 'Obstetrics & Gynaecology', 'LIC-1003', 'MBChB, MMed (O&G)', 25.00, 'Maternal health and reproductive care.'),
-    ('doctor4@debek.local', 'Internal Medicine', 'LIC-1004', 'MBChB, MMed (Internal Medicine)', 20.00, 'Adult chronic disease management.'),
-    ('doctor5@debek.local', 'Dermatology', 'LIC-1005', 'MBChB, Dip. Dermatology', 22.00, 'Skin, hair and nail conditions.'),
-    ('doctor6@debek.local', 'ENT', 'LIC-1006', 'MBChB, MMed (ENT)', 20.00, 'Ear, nose and throat specialist.'),
-    ('doctor7@debek.local', 'Orthopedics', 'LIC-1007', 'MBChB, MMed (Orthopaedics)', 28.00, 'Musculoskeletal injuries and disorders.'),
-    ('doctor8@debek.local', 'Cardiology', 'LIC-1008', 'MBChB, MMed (Cardiology)', 30.00, 'Heart and cardiovascular health.'),
-    ('doctor9@debek.local', 'Psychiatry', 'LIC-1009', 'MBChB, MMed (Psychiatry)', 24.00, 'Mental health and counselling.'),
-    ('doctor10@debek.local', 'Dentistry', 'LIC-1010', 'BDS', 16.00, 'General and restorative dental care.')
+    ('doctor1@debek.local', 'General Medicine', 'LIC-1001', 'MBChB, MMed (Family Medicine)', 5000.00, 'General practitioner with 10 years of clinic experience.'),
+    ('doctor2@debek.local', 'Pediatrics', 'LIC-1002', 'MBChB, MMed (Paediatrics)', 6000.00, 'Focuses on child and adolescent health.'),
+    ('doctor3@debek.local', 'Obstetrics & Gynaecology', 'LIC-1003', 'MBChB, MMed (O&G)', 8000.00, 'Maternal health and reproductive care.'),
+    ('doctor4@debek.local', 'Internal Medicine', 'LIC-1004', 'MBChB, MMed (Internal Medicine)', 7000.00, 'Adult chronic disease management.'),
+    ('doctor5@debek.local', 'Dermatology', 'LIC-1005', 'MBChB, Dip. Dermatology', 7500.00, 'Skin, hair and nail conditions.'),
+    ('doctor6@debek.local', 'ENT', 'LIC-1006', 'MBChB, MMed (ENT)', 7000.00, 'Ear, nose and throat specialist.'),
+    ('doctor7@debek.local', 'Orthopedics', 'LIC-1007', 'MBChB, MMed (Orthopaedics)', 9000.00, 'Musculoskeletal injuries and disorders.'),
+    ('doctor8@debek.local', 'Cardiology', 'LIC-1008', 'MBChB, MMed (Cardiology)', 10000.00, 'Heart and cardiovascular health.'),
+    ('doctor9@debek.local', 'Psychiatry', 'LIC-1009', 'MBChB, MMed (Psychiatry)', 8000.00, 'Mental health and counselling.'),
+    ('doctor10@debek.local', 'Dentistry', 'LIC-1010', 'BDS', 5500.00, 'General and restorative dental care.')
 ) as d(email, specialization, license_number, qualifications, fee, bio)
 join auth.users u on u.email = d.email
 join public.profiles p on p.id = u.id;
@@ -107,6 +109,12 @@ join auth.users u on u.id = pr.id
 where u.email like 'reception%@debek.local';
 
 -- ── 4. Patients (50) ────────────────────────────────────────────────
+-- Names drawn from common South Sudanese given/family names across
+-- several ethnic groups (Dinka, Nuer, Bari, Equatorian) — overlap
+-- between the two lists is deliberate, not a bug: South Sudanese names
+-- are commonly patronymic chains (a person's own name followed by their
+-- father's and grandfather's), so the same name pool legitimately
+-- supplies both "first" and "last" position.
 with names as (
   select
     fn as first_name,
@@ -115,17 +123,17 @@ with names as (
   from
     unnest(array[
       'James','Mary','Peter','Grace','John','Faith','David','Ruth','Samuel','Joyce',
-      'Daniel','Esther','Michael','Sarah','Joseph','Ann','Paul','Lucy','Stephen','Diana',
-      'Emmanuel','Beatrice','Kevin','Winnie','Brian','Irene','Dennis','Caroline','Victor','Agnes',
-      'Patrick','Mercy','Charles','Elizabeth','Anthony','Catherine','George','Susan','Francis','Nancy',
-      'Robert','Jane','Thomas','Margaret','Isaac','Rose','Moses','Christine','Eric','Judith'
+      'Daniel','Esther','Deng','Nyandeng','Joseph','Ann','Paul','Achol','Stephen','Diana',
+      'Emmanuel','Beatrice','Santino','Winnie','Garang','Irene','Simon','Caroline','Victor','Agnes',
+      'Gabriel','Mercy','Charles','Elizabeth','Anthony','Abuk','George','Susan','Francis','Nyanhial',
+      'Robert','Jane','Thomas','Margaret','Isaac','Rose','Moses','Christine','Yel','Judith'
     ]) with ordinality as t1(fn, ord1)
     join unnest(array[
-      'Mwangi','Achieng','Otieno','Wanjiru','Kiptoo','Nyambura','Kamau','Adhiambo','Njoroge','Wambui',
-      'Odhiambo','Chebet','Kariuki','Auma','Mutua','Naliaka','Omondi','Wairimu','Kipchoge','Anyango',
-      'Njuguna','Cherono','Barasa','Nafula','Waweru','Akinyi','Too','Wangari','Owino','Jepkosgei',
-      'Gitau','Atieno','Ochieng','Muthoni','Kilonzo','Nekesa','Wekesa','Njeri','Onyango','Wafula',
-      'Mburu','Adisa','Rotich','Nyokabi','Simiyu','Wanjiku','Ouma','Kemunto','Langat','Moraa'
+      'Deng','Garang','Malong','Akec','Bol','Chol','Kuol','Kur','Mabior','Athian',
+      'Ajak','Manyang','Madut','Wani','Lado','Modi','Taban','Lomude','Gatkuoth','Gatluak',
+      'Riek','Nyibol','Ayen','Majok','Nyanhial','Adau','Abuk','Nyandeng','Achol','Puok',
+      'Gai','Wal','Kir','Deu','Yak','Anei','Piol','Awan','Bul','Dhieu',
+      'Ring','Machot','Manyok','Aleu','Biar','Dut','Kon','Nhial','Thiik','Ajang'
     ]) with ordinality as t2(ln, ord2) on ord1 = ord2
 )
 insert into public.patients (
@@ -138,15 +146,15 @@ select
   names.last_name,
   (date '1950-01-01' + (floor(random() * (365 * 70)))::int * interval '1 day')::date,
   case when random() < 0.48 then 'male' when random() < 0.96 then 'female' else 'other' end::public.gender_type,
-  '07' || lpad((10000000 + names.n * 137)::text, 8, '0'),
+  '09' || lpad((10000000 + names.n * 137)::text, 8, '0'),
   case when random() < 0.4 then lower(names.first_name || '.' || names.last_name || names.n || '@example.com') else null end,
-  (array['Nairobi', 'Kisumu', 'Mombasa', 'Nakuru', 'Eldoret', 'Thika', 'Kakamega', 'Machakos'])[1 + floor(random() * 8)::int] || ', Kenya',
+  (array['Juba', 'Wau', 'Malakal', 'Yei', 'Bor', 'Rumbek', 'Torit', 'Aweil', 'Yambio', 'Bentiu'])[1 + floor(random() * 10)::int] || ', South Sudan',
   case when random() < 0.6 then (20000000 + names.n * 91)::text else null end,
   case when random() < 0.5 then (array['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])[1 + floor(random() * 8)::int] else null end,
   case when random() < 0.25 then (array['Penicillin', 'Sulfa drugs', 'Peanuts', 'Latex', 'None known'])[1 + floor(random() * 5)::int] else null end,
   case when random() < 0.2 then (array['Hypertension', 'Type 2 Diabetes', 'Asthma', 'Chronic back pain'])[1 + floor(random() * 4)::int] else null end,
   names.first_name || ' Family Contact',
-  '07' || lpad((30000000 + names.n * 271)::text, 8, '0'),
+  '09' || lpad((30000000 + names.n * 271)::text, 8, '0'),
   rp.ids[1 + floor(random() * array_length(rp.ids, 1))::int],
   now() - (floor(random() * 180))::int * interval '1 day'
 from names
@@ -309,7 +317,7 @@ where random() < 0.5;
 insert into public.invoices (patient_id, appointment_id, issue_date, discount, tax, created_by)
 select
   ca.patient_id, ca.appointment_id, ca.visit_date,
-  case when random() < 0.15 then round((random() * 5)::numeric, 2) else 0 end,
+  case when random() < 0.15 then round((random() * 500)::numeric, 2) else 0 end,
   0,
   rp.ids[1 + floor(random() * array_length(rp.ids, 1))::int]
 from completed_appointments ca
@@ -324,7 +332,7 @@ join public.doctors doc on doc.id = a.doctor_id;
 create temporary table extra_item_pool on commit drop as
 select
   array['Lab test - Malaria RDT', 'Lab test - Full blood count', 'Wound dressing', 'Vaccination'] as descriptions,
-  array[5.00, 8.00, 3.00, 6.00] as prices;
+  array[800.00, 1200.00, 500.00, 700.00] as prices;
 
 insert into public.invoice_items (invoice_id, description, quantity, unit_price)
 select inv.id, eip.descriptions[pick.idx], 1, eip.prices[pick.idx]

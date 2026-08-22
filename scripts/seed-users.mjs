@@ -55,25 +55,27 @@ if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
 // academic-project data, not a real deployment. Documented in README.md.
 const SEED_PASSWORD = "Debek@2026";
 
+// Phone numbers use South Sudan's country code (+211); mobile prefixes
+// (092/095/096/097) mirror MTN/Zain/Digitel South Sudan ranges.
 const staff = [
-  { email: "admin@debek.local", full_name: "Ada Namono", role: "admin", phone: "0711000001" },
-  { email: "admin2@debek.local", full_name: "Brian Otieno", role: "admin", phone: "0711000002" },
-  { email: "reception@debek.local", full_name: "Rita Wanjiru", role: "receptionist", phone: "0711000010" },
-  { email: "reception2@debek.local", full_name: "Paul Njuguna", role: "receptionist", phone: "0711000011" },
-  { email: "reception3@debek.local", full_name: "Winnie Chebet", role: "receptionist", phone: "0711000012" },
+  { email: "admin@debek.local", full_name: "Awut Deng Garang", role: "admin", phone: "+211 92 000 0001" },
+  { email: "admin2@debek.local", full_name: "Emmanuel Taban Wani", role: "admin", phone: "+211 92 000 0002" },
+  { email: "reception@debek.local", full_name: "Nyandeng Malong Akec", role: "receptionist", phone: "+211 95 000 0010" },
+  { email: "reception2@debek.local", full_name: "Santino Lado Modi", role: "receptionist", phone: "+211 95 000 0011" },
+  { email: "reception3@debek.local", full_name: "Rebecca Ajak Bol", role: "receptionist", phone: "+211 95 000 0012" },
 ];
 
 const doctors = [
-  { email: "doctor1@debek.local", full_name: "Dr. James Mwangi", phone: "0711000020" },
-  { email: "doctor2@debek.local", full_name: "Dr. Mary Achieng", phone: "0711000021" },
-  { email: "doctor3@debek.local", full_name: "Dr. Peter Otieno", phone: "0711000022" },
-  { email: "doctor4@debek.local", full_name: "Dr. Grace Wanjiru", phone: "0711000023" },
-  { email: "doctor5@debek.local", full_name: "Dr. David Kiptoo", phone: "0711000024" },
-  { email: "doctor6@debek.local", full_name: "Dr. Faith Nyambura", phone: "0711000025" },
-  { email: "doctor7@debek.local", full_name: "Dr. Samuel Kamau", phone: "0711000026" },
-  { email: "doctor8@debek.local", full_name: "Dr. Joyce Adhiambo", phone: "0711000027" },
-  { email: "doctor9@debek.local", full_name: "Dr. Daniel Njoroge", phone: "0711000028" },
-  { email: "doctor10@debek.local", full_name: "Dr. Esther Wambui", phone: "0711000029" },
+  { email: "doctor1@debek.local", full_name: "Dr. Deng Chol Kuol", phone: "+211 96 000 0020" },
+  { email: "doctor2@debek.local", full_name: "Dr. Achol Majok Ayen", phone: "+211 96 000 0021" },
+  { email: "doctor3@debek.local", full_name: "Dr. James Wani Lomude", phone: "+211 96 000 0022" },
+  { email: "doctor4@debek.local", full_name: "Dr. Grace Nyanhial Gatkuoth", phone: "+211 96 000 0023" },
+  { email: "doctor5@debek.local", full_name: "Dr. Peter Gatluak Riek", phone: "+211 96 000 0024" },
+  { email: "doctor6@debek.local", full_name: "Dr. Mary Abuk Athian", phone: "+211 96 000 0025" },
+  { email: "doctor7@debek.local", full_name: "Dr. Simon Yel Kur", phone: "+211 96 000 0026" },
+  { email: "doctor8@debek.local", full_name: "Dr. Agnes Adau Ajang", phone: "+211 96 000 0027" },
+  { email: "doctor9@debek.local", full_name: "Dr. Joseph Madut Manyang", phone: "+211 96 000 0028" },
+  { email: "doctor10@debek.local", full_name: "Dr. Elizabeth Nyibol Deng", phone: "+211 96 000 0029" },
 ];
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {

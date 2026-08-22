@@ -15,7 +15,7 @@ const STATUS_STYLES: Record<AppointmentStatus, string> = {
   no_show: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
 };
 
-const STATUS_LABEL: Record<AppointmentStatus, string> = {
+export const STATUS_LABEL: Record<AppointmentStatus, string> = {
   scheduled: "Scheduled",
   confirmed: "Confirmed",
   checked_in: "Checked in",

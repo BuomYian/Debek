@@ -4,6 +4,8 @@ import Link from "next/link";
 
 import type { DoctorDashboard } from "@/actions/dashboard";
 import { AppointmentStatusBadge } from "@/components/features/appointments/appointment-status-badge";
+import { CategoricalPieChart } from "@/components/features/reports/categorical-pie-chart";
+import { SingleSeriesBarChart } from "@/components/features/reports/single-series-bar-chart";
 import { StatTile } from "@/components/features/reports/stat-tile";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +13,11 @@ import type { AppointmentStatus } from "@/lib/validations/appointments";
 
 /** Section 5.9: "Doctor dashboard: today's schedule, patients seen this week, next appointment." */
 export function DoctorDashboardView({ data }: { data: DoctorDashboard }) {
+  const consultationsByDay = data.weeklyTrend.map((d) => ({
+    label: format(parseISO(d.date), "EEE"),
+    value: d.count,
+  }));
+
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -63,6 +70,11 @@ export function DoctorDashboardView({ data }: { data: DoctorDashboard }) {
           )}
         </CardContent>
       </Card>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <SingleSeriesBarChart title="Consultations completed — this week" data={consultationsByDay} valueLabel="Consultations" />
+        <CategoricalPieChart title="This week's appointments by status" data={data.statusBreakdownThisWeek} />
+      </div>
     </div>
   );
 }

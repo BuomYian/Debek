@@ -67,6 +67,17 @@ node scripts/seed-users.mjs        # create the 15 seed staff/doctor logins (Adm
 psql "$DATABASE_URL" -f supabase/seed.sql   # patients, doctors, appointments, records, billing
 ```
 
+To wipe the seed data and start over (e.g. after pulling a change to what
+`seed.sql` generates) — `seed-users.mjs` is idempotent per-email and will
+otherwise just skip already-existing accounts rather than update them:
+
+```bash
+psql "$DATABASE_URL" -f supabase/reset-seed-data.sql   # clears patients, appointments, billing, etc.
+node scripts/reset-seed-users.mjs                       # deletes the 15 seed logins (Admin API)
+node scripts/seed-users.mjs                             # recreate them
+psql "$DATABASE_URL" -f supabase/seed.sql               # repopulate
+```
+
 Regenerate `lib/supabase/types.ts` after any migration change:
 
 ```bash
@@ -89,7 +100,7 @@ one per specialization); the primary one to demo with per role:
 | Role | Email | Password |
 |---|---|---|
 | Admin | `admin@debek.local` | `Debek@2026` |
-| Doctor | `doctor1@debek.local` (Dr. James Mwangi, General Medicine) | `Debek@2026` |
+| Doctor | `doctor1@debek.local` (Dr. Deng Chol Kuol, General Medicine) | `Debek@2026` |
 | Receptionist | `reception@debek.local` | `Debek@2026` |
 
 ## Environment variables

@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import type { DoctorWithProfile } from "@/actions/doctors";
 import { Badge } from "@/components/ui/badge";
+import { formatMoney } from "@/lib/currency";
 import type { AppTableFeatures } from "@/lib/table";
 
 const columnHelper = createColumnHelper<AppTableFeatures, DoctorWithProfile>();
@@ -26,7 +27,7 @@ export const doctorColumns = columnHelper.columns([
   }),
   columnHelper.accessor("consultation_fee", {
     header: "Fee",
-    cell: ({ row }) => `$${Number(row.original.consultation_fee).toFixed(2)}`,
+    cell: ({ row }) => formatMoney(Number(row.original.consultation_fee)),
   }),
   columnHelper.accessor("is_accepting_appointments", {
     header: "Status",

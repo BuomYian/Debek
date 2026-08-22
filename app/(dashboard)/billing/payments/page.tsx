@@ -5,12 +5,9 @@ import Link from "next/link";
 import { listOutstandingInvoices } from "@/actions/billing";
 import { Badge } from "@/components/ui/badge";
 import { requireRole } from "@/lib/auth/guards";
+import { formatMoney as money } from "@/lib/currency";
 
 export const metadata = { title: "Outstanding Balances" };
-
-function money(value: number): string {
-  return `$${value.toFixed(2)}`;
-}
 
 /** Section 5.7: "Outstanding-balances list." */
 export default async function OutstandingBalancesPage() {

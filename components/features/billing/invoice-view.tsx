@@ -27,10 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { CLINIC_NAME } from "@/lib/clinic";
-
-function money(value: number): string {
-  return `$${value.toFixed(2)}`;
-}
+import { formatMoney as money } from "@/lib/currency";
 
 function CancelInvoiceButton({ invoiceId }: { invoiceId: string }) {
   const [isPending, startTransition] = useTransition();

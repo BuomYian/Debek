@@ -3,6 +3,7 @@
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatMoney } from "@/lib/currency";
 
 type ValueFormat = "number" | "currency" | "percent";
 
@@ -11,7 +12,7 @@ type ValueFormat = "number" | "currency" | "percent";
 // component (only data and Server Actions cross that boundary), so the
 // caller passes a format *name* and this component owns the function.
 function formatValue(value: number, kind: ValueFormat): string {
-  if (kind === "currency") return `$${value.toFixed(2)}`;
+  if (kind === "currency") return formatMoney(value);
   if (kind === "percent") return `${value}%`;
   return String(value);
 }
@@ -56,7 +57,13 @@ export function SingleSeriesBarChart({
                 height={50}
                 interval={0}
               />
-              <YAxis tick={{ fontSize: 12, fill: "var(--muted-foreground)" }} tickLine={false} axisLine={false} width={40} />
+              <YAxis
+                tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
+                tickLine={false}
+                axisLine={false}
+                width={valueFormat === "currency" ? 56 : 40}
+                tickFormatter={(value: number) => value.toLocaleString("en-US")}
+              />
               <Tooltip
                 cursor={{ fill: "var(--muted)" }}
                 formatter={(value) => {

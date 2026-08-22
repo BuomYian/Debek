@@ -74,7 +74,7 @@ export function DoctorProfileForm({ doctor, onDone }: { doctor: DoctorWithProfil
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Consultation fee</FieldLabel>
+                <FieldLabel htmlFor={field.name}>Consultation fee (SSP)</FieldLabel>
                 <Input
                   {...field}
                   id={field.name}

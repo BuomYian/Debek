@@ -4,10 +4,7 @@ import Link from "next/link";
 
 import type { InvoiceWithDetails } from "@/actions/billing";
 import { InvoiceStatusBadge } from "@/components/features/billing/invoice-status-badge";
-
-function money(value: number): string {
-  return `$${value.toFixed(2)}`;
-}
+import { formatMoney as money } from "@/lib/currency";
 
 export function PatientBillingTab({ invoices }: { invoices: InvoiceWithDetails[] }) {
   if (invoices.length === 0) {
