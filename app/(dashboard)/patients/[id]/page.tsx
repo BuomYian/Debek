@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 
 import { listAppointments } from "@/actions/appointments";
+import { listPatientInvoices } from "@/actions/billing";
 import { listPatientMedicalRecords } from "@/actions/medical-records";
 import { getPatient } from "@/actions/patients";
 import { listPatientPrescriptions } from "@/actions/prescriptions";
 import { ModulePlaceholder } from "@/components/module-placeholder";
 import { PatientAppointmentsTab } from "@/components/features/patients/patient-appointments-tab";
+import { PatientBillingTab } from "@/components/features/patients/patient-billing-tab";
 import { PatientMedicalRecordsTab } from "@/components/features/patients/patient-medical-records-tab";
 import { PatientOverview } from "@/components/features/patients/patient-overview";
 import { PatientPrescriptionsTab } from "@/components/features/patients/patient-prescriptions-tab";
@@ -38,10 +40,11 @@ export default async function PatientDetailPage(props: PageProps<"/patients/[id]
   const canSeeClinical = user.role === "admin" || user.role === "doctor";
   const canSeeBilling = user.role === "admin" || user.role === "receptionist";
 
-  const [appointmentsResult, recordsResult, prescriptionsResult] = await Promise.all([
+  const [appointmentsResult, recordsResult, prescriptionsResult, invoicesResult] = await Promise.all([
     listAppointments({ from: HISTORY_FROM, to: HISTORY_TO, patientId: id }),
     canSeeClinical ? listPatientMedicalRecords(id) : Promise.resolve(null),
     canSeeClinical ? listPatientPrescriptions(id) : Promise.resolve(null),
+    canSeeBilling ? listPatientInvoices(id) : Promise.resolve(null),
   ]);
 
   const appointments = appointmentsResult.success
@@ -49,6 +52,7 @@ export default async function PatientDetailPage(props: PageProps<"/patients/[id]
     : [];
   const records = recordsResult?.success ? recordsResult.data : [];
   const prescriptions = prescriptionsResult?.success ? prescriptionsResult.data : [];
+  const invoices = invoicesResult?.success ? invoicesResult.data : [];
 
   return (
     <div className="flex flex-col gap-4">
@@ -90,7 +94,7 @@ export default async function PatientDetailPage(props: PageProps<"/patients/[id]
         )}
         {canSeeBilling && (
           <TabsContent value="billing">
-            <ModulePlaceholder title="Billing" description="Invoices and payment history." phase="Phase 9" />
+            <PatientBillingTab invoices={invoices} />
           </TabsContent>
         )}
         <TabsContent value="files">

@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Stethoscope,
   Users,
+  Wallet,
 } from "lucide-react";
 
 import type { UserRole } from "@/lib/auth/session";
@@ -46,6 +47,7 @@ const NAV_BY_ROLE: Record<UserRole, NavSection[]> = {
         { label: "Appointments", href: "/appointments", icon: CalendarClock },
         { label: "Prescriptions", href: "/prescriptions", icon: Pill },
         { label: "Billing", href: "/billing/invoices", icon: Receipt },
+        { label: "Outstanding Balances", href: "/billing/payments", icon: Wallet },
         { label: "Reports", href: "/reports", icon: FileText },
       ],
     },
@@ -77,6 +79,7 @@ const NAV_BY_ROLE: Record<UserRole, NavSection[]> = {
         { label: "Appointments", href: "/appointments", icon: CalendarClock },
         { label: "Today's Queue", href: "/appointments/queue", icon: ListChecks },
         { label: "Billing", href: "/billing/invoices", icon: Receipt },
+        { label: "Outstanding Balances", href: "/billing/payments", icon: Wallet },
       ],
     },
   ],

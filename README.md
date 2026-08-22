@@ -7,10 +7,10 @@ appointment books and physical filing cabinets with a single system for
 booking, electronic medical records, prescriptions, billing and patient
 file storage.
 
-> **Status:** Phases 1–8 of the build (scaffold, database schema, auth &
+> **Status:** Phases 1–9 of the build (scaffold, database schema, auth &
 > role-aware shell, patient management, doctor management, appointment
-> booking, electronic medical records, prescription management) are
-> complete. See [Build phases](#build-phases) below for what's
+> booking, electronic medical records, prescription management,
+> billing) are complete. See [Build phases](#build-phases) below for what's
 > implemented so far. The live Supabase project referenced in
 > `.env.local` is migrated and seeded — see the credentials table above.
 
@@ -191,7 +191,17 @@ after each phase:
       items, non-blocking duplicate-active-medication warning, printable
       slip with clinic header/patient details/doctor license/date,
       patient-tab and standalone list integration.
-- [ ] **Phase 9** — Billing.
+- [x] **Phase 9** — Billing: completing an appointment (either the
+      manual button or saving a consultation) auto-drafts an invoice
+      seeded with the doctor's fee — one shared helper
+      (`lib/billing/draft-invoice.ts`), called from both places,
+      deliberately running as the service-role client since a doctor
+      triggers one of those two paths but has zero RLS access to
+      invoices; see that file's comment for why that's not a
+      contradiction. Line items, discount/tax, payments (amount_paid /
+      status / balance all recompute via the Phase 2 triggers — no new
+      code needed for that part), printable invoice/receipt, outstanding
+      balances list.
 - [ ] **Phase 10** — Cloudinary file upload.
 - [ ] **Phase 11** — Reports & dashboards.
 - [ ] **Phase 12** — Audit logging, polish, accessibility, docs.

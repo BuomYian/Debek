@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireRoleForAction } from "@/lib/auth/guards";
+import { draftInvoiceForCompletedAppointment } from "@/lib/billing/draft-invoice";
 import { computeAvailableSlots } from "@/lib/scheduling/slots";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
@@ -224,6 +225,11 @@ export async function setAppointmentStatus(input: SetStatusInput): Promise<Actio
 
     const { error } = await supabase.from("appointments").update({ status: parsed.data.status }).eq("id", parsed.data.id);
     if (error) throw error;
+
+    if (parsed.data.status === "completed") {
+      await draftInvoiceForCompletedAppointment(parsed.data.id);
+      revalidatePath("/billing/invoices");
+    }
 
     revalidatePath("/appointments");
     revalidatePath(`/appointments/${parsed.data.id}`);

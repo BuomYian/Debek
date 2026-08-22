@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireRoleForAction } from "@/lib/auth/guards";
+import { draftInvoiceForCompletedAppointment } from "@/lib/billing/draft-invoice";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { Database, Json } from "@/lib/supabase/types";
 import type { ActionResult } from "@/lib/validations/common";
@@ -96,9 +97,12 @@ export async function createMedicalRecord(
         .single();
       if (appt && appt.status !== "completed" && appt.status !== "cancelled") {
         await supabase.from("appointments").update({ status: "completed" }).eq("id", parsed.data.appointmentId);
+        // Section 5.7: completing an appointment auto-drafts an invoice.
+        await draftInvoiceForCompletedAppointment(parsed.data.appointmentId);
         revalidatePath(`/appointments/${parsed.data.appointmentId}`);
         revalidatePath("/appointments");
         revalidatePath("/appointments/queue");
+        revalidatePath("/billing/invoices");
       }
     }
 
